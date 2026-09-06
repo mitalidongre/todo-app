@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My To-Do App</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 30px 15px;
+    transition: 0.3s;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.header p {
+    font-size: 16px;
+}
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: 0.3s;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 10px;
+}
+
+input, select, button {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    outline: 2px solid #667eea;
+}
+
+.add-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.add-btn:hover {
+    background: #5568d8;
+}
+
+.dark-btn {
+    margin-top: 15px;
+    cursor: pointer;
+    border: none;
+    background: white;
+    color: #333;
+    font-weight: bold;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    text-align: center;
+}
+
+.stat {
+    padding: 18px;
+    background: #f5f6ff;
+    border-radius: 12px;
+}
+
+.stat h2 {
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.search {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-btn {
+    background: #f1f1f1;
+    cursor: pointer;
+    border: none;
+}
+
+.filter-btn.active {
+    background: #667eea;
+    color: white;
+}
+
+.controls select {
+    cursor: pointer;
+    background: #f1f1f1;
+}
+
+.dark-mode .controls select {
+    background: #333;
+    color: white;
+    border-color: #444;
+}
+
+.progress-container {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    height: 12px;
+    background: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: #667eea;
+    transition: 0.3s;
+}
+
+.task {
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.task.completed {
+    background: #f3f3f3;
+}
+
+.task.completed .task-title {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.task-info {
+    flex: 1;
+}
+
+.task-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.task-details {
+    color: #777;
+    font-size: 13px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.high {
+    background: #ffe0e0;
+    color: #d63031;
+}
+
+.medium {
+    background: #fff0c2;
+    color: #b77900;
+}
+
+.low {
+    background: #dff7e5;
+    color: #16823b;
+}
+
+.task-buttons {
+    display: flex;
+    gap: 7px;
+}
+
+.task-buttons button {
+    border: none;
+    cursor: pointer;
+    padding: 8px 10px;
+}
+
+.complete-btn {
+    background: #dff7e5;
+}
+
+.edit-btn {
+    background: #e4e8ff;
+}
+
+.delete-btn {
+    background: #ffe0e0;
+}
+
+.empty {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+}
+
+/* DARK MODE */
+
+body.dark-mode {
+    background: linear-gradient(135deg, #111827, #312e81);
+}
+
+.dark-mode .card {
+    background: #1e1e1e;
+    color: white;
+}
+
+.dark-mode input,
+.dark-mode select {
+    background: #2a2a2a;
+    color: white;
+    border-color: #444;
+}
+
+.dark-mode .stat {
+    background: #2a2a2a;
+}
+
+.dark-mode .task {
+    background: #1e1e1e;
+    border-color: #444;
+}
+
+.dark-mode .task.completed {
+    background: #2a2a2a;
+}
+
+.dark-mode .task-details {
+    color: #bbb;
+}
+
+.dark-mode .filter-btn {
+    background: #333;
+    color: white;
+}
+
+.dark-mode .filter-btn.active {
+    background: #667eea;
+    color: white;
+}
+
+.controls select {
+    cursor: pointer;
+    background: #f1f1f1;
+}
+
+.dark-mode .controls select {
+    background: #333;
+    color: white;
+    border-color: #444;
+}
+
+.dark-mode .empty {
+    color: #aaa;
+}
+
+.dark-mode .progress-bar {
+    background: #444;
+}
+
+@media (max-width: 800px) {
+
+    .form {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .task {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .task-buttons {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>📝 My To-Do App</h1>
+
+        <p>Organize your tasks and get things done 🚀</p>
+
+        <button class="dark-btn" onclick="toggleDarkMode()">
+            🌙 Dark Mode
+        </button>
+
+    </div>
+
+
+    <!-- ADD TASK -->
+
+    <div class="card">
+
+        <div class="form">
+
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Enter task..."
+            >
+
+            <select id="categoryInput">
+
+                <option value="Work">Work</option>
+
+                <option value="Study">Study</option>
+
+                <option value="Personal">Personal</option>
+
+            </select>
+
+
+            <select id="priorityInput">
+
+                <option value="High">High</option>
+
+                <option value="Medium" selected>Medium</option>
+
+                <option value="Low">Low</option>
+
+            </select>
+
+
+            <input
+                type="date"
+                id="dateInput"
+            >
+
+
+            <button
+                class="add-btn"
+                onclick="addTask()"
+            >
+                Add Task
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="card">
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <h2 id="total">0</h2>
+
+                <p>Total</p>
+
+            </div>
+
+
+            <div class="stat">
+
+                <h2 id="completed">0</h2>
+
+                <p>Completed</p>
+
+            </div>
+
+
+            <div class="stat">
+
+                <h2 id="pending">0</h2>
+
+                <p>Pending</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="progress-container">
+
+            <p>Progress</p>
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress"
+                    id="progress">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH AND FILTER -->
+
+    <div class="card">
+
+        <div class="controls">
+
+            <input
+                class="search"
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Search tasks..."
+                oninput="displayTasks()"
+            >
+
+
+            <button
+                class="filter-btn active"
+                onclick="setFilter('all', this)"
+            >
+                All
+            </button>
+
+
+            <button
+                class="filter-btn"
+                onclick="setFilter('pending', this)"
+            >
+                Pending
+            </button>
+
+
+            <button
+                class="filter-btn"
+                onclick="setFilter('completed', this)"
+            >
+                Completed
+            </button>
+
+            <select id="categoryFilter" onchange="setCategory(this.value)">
+                <option value="all">All Categories</option>
+                <option value="Work">📁 Work</option>
+                <option value="Study">📚 Study</option>
+                <option value="Personal">🏠 Personal</option>
+            </select>
+
+            <select id="priorityFilter" onchange="setPriority(this.value)">
+                <option value="all">All Priority</option>
+                <option value="High">🔴 High</option>
+                <option value="Medium">🟡 Medium</option>
+                <option value="Low">🟢 Low</option>
+            </select>
+
+            <select id="sortFilter" onchange="setSort(this.value)">
+                <option value="default">Sort: Default</option>
+                <option value="priorityHigh">🔴 High → Low</option>
+                <option value="priorityLow">🟢 Low → High</option>
+                <option value="newest">🆕 Newest First</option>
+                <option value="oldest">📅 Oldest First</option>
+            </select>
+
+
+            <button class="filter-btn" onclick="setCategory('all', this)">All Categories</button>
+            <button class="filter-btn" onclick="setCategory('Work', this)">💼 Work</button>
+            <button class="filter-btn" onclick="setCategory('Study', this)">📚 Study</button>
+            <button class="filter-btn" onclick="setCategory('Personal', this)">🏠 Personal</button>
+
+            <button class="filter-btn" onclick="setPriority('all', this)">All Priority</button>
+            <button class="filter-btn" onclick="setPriority('High', this)">🔴 High</button>
+            <button class="filter-btn" onclick="setPriority('Medium', this)">🟡 Medium</button>
+            <button class="filter-btn" onclick="setPriority('Low', this)">🟢 Low</button>
+
+            <button
+                class="filter-btn"
+                onclick="deleteCompleted()"
+            >
+                Delete Completed
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK LIST -->
+
+    <div class="card">
+
+        <div id="taskList"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+let currentFilter = "all";
+let currentCategory = "all";
+let currentPriority = "all";
+
+
+    tasks = tasks.map(task => ({
+        ...task,
+        category: task.category || "Work",
+        priority: task.priority || "Medium"
+    }));
+
+function saveTasks() {
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+    );
+
+}
+
+
+function addTask() {
+
+    const title =
+        document.getElementById("taskInput").value.trim();
+
+    const category =
+        document.getElementById("categoryInput").value;
+
+    const priority =
+        document.getElementById("priorityInput").value;
+
+    const date =
+        document.getElementById("dateInput").value;
+
+
+    if (title === "") {
+
+        alert("Please enter a task!");
+
+        return;
+
+    }
+
+
+    const task = {
+
+        id: Date.now(),
+
+        title: title,
+
+        category: category,
+
+        priority: priority,
+
+        date: date,
+
+        completed: false
+
+    };
+
+
+    tasks.push(task);
+
+    saveTasks();
+
+    displayTasks();
+
+
+    document.getElementById("taskInput").value = "";
+
+    document.getElementById("dateInput").value = "";
+
+}
+
+
+function toggleTask(id) {
+
+    const task =
+        tasks.find(t => t.id === id);
+
+
+    if (task) {
+
+        task.completed =
+            !task.completed;
+
+    }
+
+
+    saveTasks();
+
+    displayTasks();
+
+}
+
+
+function editTask(id) {
+
+    const task =
+        tasks.find(t => t.id === id);
+
+
+    if (!task) return;
+
+
+    const newTitle =
+        prompt(
+            "Edit your task:",
+            task.title
+        );
+
+
+    if (
+        newTitle !== null &&
+        newTitle.trim() !== ""
+    ) {
+
+        task.title =
+            newTitle.trim();
+
+        saveTasks();
+
+        displayTasks();
+
+    }
+
+}
+
+
+function deleteTask(id) {
+
+    if (
+        confirm(
+            "Are you sure you want to delete this task?"
+        )
+    ) {
+
+        tasks =
+            tasks.filter(
+                t => t.id !== id
+            );
+
+        saveTasks();
+
+        displayTasks();
+
+    }
+
+}
+
+
+function deleteCompleted() {
+
+    tasks =
+        tasks.filter(
+            t => !t.completed
+        );
+
+    saveTasks();
+
+    displayTasks();
+
+}
+
+
+function setFilter(filter, button) {
+
+    currentFilter = filter;
+
+
+    document
+        .querySelectorAll(".filter-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    button.classList.add("active");
+
+    displayTasks();
+
+}
+
+
+function setCategory(category, button) {
+    currentCategory = category;
+    displayTasks();
+}
+
+function setPriority(priority, button) {
+    currentPriority = priority;
+    displayTasks();
+}
+
+function setCategory(category) {
+    currentCategory = category;
+    displayTasks();
+}
+
+function setPriority(priority) {
+    currentPriority = priority;
+    displayTasks();
+}
+
+function setSort(sort) {
+    currentSort = sort;
+    displayTasks();
+}
+
+function displayTasks() {
+
+    const list =
+        document.getElementById("taskList");
+
+
+    const search =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase();
+
+
+    let filtered =
+        tasks.filter(task => {
+
+
+            const matchesSearch =
+
+                task.title
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                task.category
+                    .toLowerCase()
+                    .includes(search);
+
+
+            const matchesFilter =
+
+                currentFilter === "all"
+
+                ||
+
+                (
+                    currentFilter === "pending"
+                    &&
+                    !task.completed
+                )
+
+                ||
+
+                (
+                    currentFilter === "completed"
+                    &&
+                    task.completed
+                );
+
+            const matchesCategory =
+                currentCategory === "all" || task.category === currentCategory;
+
+            const matchesPriority =
+                currentPriority === "all" || task.priority === currentPriority;
+
+
+            return (
+                matchesSearch &&
+                matchesFilter &&
+                matchesCategory &&
+                matchesPriority
+            );
+
+        });
+
+
+    const priorityValue = {
+        High: 3,
+        Medium: 2,
+        Low: 1
+    };
+
+    if (currentSort === "priorityHigh") {
+        filtered.sort((a, b) =>
+            priorityValue[b.priority] - priorityValue[a.priority]
+        );
+    } else if (currentSort === "priorityLow") {
+        filtered.sort((a, b) =>
+            priorityValue[a.priority] - priorityValue[b.priority]
+        );
+    } else if (currentSort === "newest") {
+        filtered.sort((a, b) => b.id - a.id);
+    } else if (currentSort === "oldest") {
+        filtered.sort((a, b) => a.id - b.id);
+    }
+
+    list.innerHTML = "";
+
+
+    if (filtered.length === 0) {
+
+        list.innerHTML = `
+
+            <div class="empty">
+
+                📋 No tasks found
+
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        filtered.forEach(task => {
+
+
+            const div =
+                document.createElement("div");
+
+
+            div.className =
+                "task" +
+                (
+                    task.completed
+                    ? " completed"
+                    : ""
+                );
+
+
+            let priorityClass =
+                task.priority.toLowerCase();
+
+
+            div.innerHTML = `
+
+                <div class="task-info">
+
+                    <div class="task-title">
+
+                        ${escapeHtml(task.title)}
+
+                    </div>
+
+
+                    <div class="task-details">
+
+                        <span
+                            class="badge ${priorityClass}"
+                        >
+
+                            ${task.priority}
+
+                        </span>
+
+
+                        <span class="badge">
+
+                            📁
+                            ${escapeHtml(task.category)}
+
+                        </span>
+
+
+                        ${
+                            task.date
+                            ? `📅 ${task.date}`
+                            : ""
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <div class="task-buttons">
+
+                    <button
+                        class="complete-btn"
+                        onclick="toggleTask(${task.id})"
+                    >
+
+                        ${
+                            task.completed
+                            ? "↩️ Undo"
+                            : "✅ Complete"
+                        }
+
+                    </button>
+
+
+                    <button
+                        class="edit-btn"
+                        onclick="editTask(${task.id})"
+                    >
+
+                        ✏️ Edit
+
+                    </button>
+
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteTask(${task.id})"
+                    >
+
+                        🗑️ Delete
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(div);
+
+        });
+
+    }
+
+
+    updateStats();
+
+}
+
+
+function updateStats() {
+
+    const total =
+        tasks.length;
+
+
+    const completed =
+        tasks.filter(
+            t => t.completed
+        ).length;
+
+
+    const pending =
+        total - completed;
+
+
+    document.getElementById("total")
+        .textContent = total;
+
+
+    document.getElementById("completed")
+        .textContent = completed;
+
+
+    document.getElementById("pending")
+        .textContent = pending;
+
+
+    const percentage =
+
+        total === 0
+        ? 0
+        : (completed / total) * 100;
+
+
+    document.getElementById("progress")
+        .style.width =
+        percentage + "%";
+
+}
+
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement("div");
+
+
+    div.textContent = text;
+
+
+    return div.innerHTML;
+
+}
+
+
+/* DARK MODE */
+
+function toggleDarkMode() {
+
+    document.body
+        .classList.toggle("dark-mode");
+
+}
+
+
+/* ENTER KEY */
+
+document
+    .getElementById("taskInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                addTask();
+
+            }
+
+        }
+    );
+
+
+/* START APP */
+
+displayTasks();
+
+</script>
+
+</body>
+</html>
